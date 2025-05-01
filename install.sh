@@ -33,7 +33,7 @@ clear
 # Install base-devel and required packages
 echo "Installing dependencies.." && sleep 2
 yay -S --noconfirm --needed qtile python-psutil pywal-git picom dunst zsh starship mpd ncmpcpp playerctl brightnessctl alacritty pfetch htop flameshot thunar roficlip rofi ranger neovim vim feh sddm rofi-greenclip
-sudo pacman -S --noconfirm --needed git vim ranger picom dunst rofi flameshot feh arandr thunar thunar-archive-plugin engrampa lxappearance playerctl tmux rclone fuse3 man virt-viewer cameractrls xorg-xkill btop network-manager-applet
+sudo pacman -S --noconfirm --needed git github-cli vim ranger picom dunst rofi flameshot feh arandr thunar thunar-archive-plugin engrampa lxappearance playerctl tmux rclone fuse3 man virt-viewer cameractrls xorg-xkill btop network-manager-applet
 sudo pacman -S --noconfirm --needed python-mpris2 python-dbus-next python-dbus-fast
 clear
 
