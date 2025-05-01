@@ -1,0 +1,24 @@
+class COLORS:
+    PRIMARY_LIGHT = "#fb958b"
+    PRIMARY = "#cf4949"
+    PRIMARY_DARK = "#973232"
+    # PRIMARY = "#fb958b"
+    PRIMARY_MUTED = "#2c2f30ff"
+    PRIMARY_MUTED = "#131c26"
+    FOREGROUND = "#ffffff"
+    # INACTIVE = "#000000"
+    INACTIVE = PRIMARY_MUTED
+
+
+class BASE:
+    # PRIMARY =  "#bd00e7ff",
+    PRIMARY = COLORS.PRIMARY
+    SECONDARY = ("",)
+    BACKGROUND = ("",)
+
+
+class WINDOW:
+    FOCUSED = BASE.PRIMARY
+    # UNFOCUSED = "#000000ff"
+    UNFOCUSED = COLORS.PRIMARY_MUTED
+    # UNFOCUSED = "#4E342E"
