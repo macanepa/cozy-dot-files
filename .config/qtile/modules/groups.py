@@ -1,10 +1,13 @@
-from libqtile.config import Key, Group
+from libqtile.config import Key, Group, ScratchPad, DropDown
 from libqtile.lazy import lazy
 from .keys import keys, mod
 
-roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X']
-# groups = [Group(str(i), label=roman[int(i)-1]) for i in '1234']
-groups = [Group(str(i), label='\ueaaa') for i in '1234']# + [Group(str('5'), label='M')]
+roman = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"]
+groups1 = ["1", "2", "3", "4"]
+groups2 = "M"
+groups = [Group(str(i), label="\ueaaa") for i in groups1] + [
+    Group(str("M"), label="🎧")
+]
 
 for i in groups:
     keys.extend(
@@ -35,3 +38,74 @@ for i in groups:
             Key(["control", "mod1"], "Left", lazy.screen.prev_group()),
         ]
     )
+
+
+def dropdown_geometry(
+    term_width_px,
+    term_height_px,
+    margin_top_px,
+    margin_right_px,
+    screen_width_px=1920,
+    screen_height_px=1080,
+):
+    width_frac = term_width_px / screen_width_px
+    height_frac = term_height_px / screen_height_px
+    x_frac = (screen_width_px - term_width_px - margin_right_px) / screen_width_px
+    y_frac = margin_top_px / screen_height_px
+    return {
+        "width": round(width_frac, 3),
+        "height": round(height_frac, 3),
+        "x": round(x_frac, 3),
+        "y": round(y_frac, 3),
+    }
+
+
+geom = dropdown_geometry(
+    term_width_px=600, term_height_px=800, margin_top_px=0, margin_right_px=58
+)
+
+groups += [
+    ScratchPad(
+        "scratchpad",
+        [
+            DropDown(
+                "chatbot",
+                "alacritty --class wiwi --option font.size=10 -e aichat --session",
+                opacity=1,
+                on_focus_lost_hide=False,
+                **geom
+            ),
+            DropDown(
+                "calendar",
+                "alacritty -e calcurse",
+                opacity=1,
+                on_focus_lost_hide=True,
+                **geom
+            ),
+            DropDown(
+                "bluetooth",
+                "blueman-manager",
+                opacity=1,
+                on_focus_lost_hide=True,
+                **dropdown_geometry(
+                    term_width_px=600,
+                    term_height_px=800,
+                    margin_top_px=0,
+                    margin_right_px=58,
+                )
+            ),
+            DropDown(
+                "sound",
+                "pavucontrol",
+                opacity=1,
+                on_focus_lost_hide=True,
+                **dropdown_geometry(
+                    term_width_px=400,
+                    term_height_px=600,
+                    margin_top_px=0,
+                    margin_right_px=58,
+                )
+            ),
+        ],
+    )
+]

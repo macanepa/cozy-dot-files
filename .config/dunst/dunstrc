@@ -18,7 +18,10 @@
     follow = mouse
 
     width = (400, 600)
-    height = 150
+    height = (60, 400)
+
+    background = "#232A2E"
+    highlight = "#d3c2aa"
 
     # The geometry of the window:
     #   [{width}]x{height}[+/-{x}+/-{y}]
@@ -57,14 +60,14 @@
     separator_height = 2
 
     # Padding between text and separator.
-    padding = 8
+    padding = 12
 
     # Horizontal padding.
     horizontal_padding = 12
 
     # Defines width in pixels of frame around the notification window.
     # Set to 0 to disable.
-    frame_width = 3
+    frame_width = 0
 
     # Defines color of the frame around the notification window.
     # frame_color = "#232A2E"
@@ -284,8 +287,8 @@
 #     # Otherwise the "#" and following would be interpreted as a comment.
 #     # foreground = "#86918A"
 #     foreground = "#d3c2aa"
-#     background = "#232A2E"
-#     # background = "#d3c2aa"
+    # background = "#232A2E"
+    # background = "#d3c2aa"
 #     # frame_color = "#232A2E"
 #     frame_color = "#d3c2aa"
 #     timeout = 10

@@ -1,5 +1,6 @@
 from libqtile.lazy import lazy
 from libqtile.config import Key
+from .functions import toggle_dropdown_ai
 import os
 
 mod = "mod4"
@@ -97,4 +98,8 @@ keys = [
     Key([], "XF86MonBrightnessUp", lazy.spawn("brightnessctl set +10%")),
     Key([], "XF86MonBrightnessDown", lazy.spawn("brightnessctl set 10%-")),
     Key([mod], "n", lazy.next_screen(), desc="Move focus to next screen"),
+    # wiwi
+    Key([mod], "o", toggle_dropdown_ai),
+    Key([mod], "e", lazy.spawn("thunar")),
+    Key([mod], "b", lazy.spawn("brave"))
 ]
