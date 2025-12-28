@@ -102,7 +102,7 @@ read -r -p "Choose your video card driver (default 1): " vid
 case $vid in
     [1]) DRI='xf86-video-intel';;
     [2]) DRI='xf86-video-amdgpu';;
-    [3]) DRI='nvidia nvidia-settings nvidia-utils';;
+    [3]) DRI='nvidia-open nvidia-settings nvidia-utils';;
     [4]) DRI="";;
     *) DRI='xf86-video-intel';;
 esac
