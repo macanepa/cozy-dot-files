@@ -2,7 +2,6 @@ class COLORS:
     PRIMARY_LIGHT = "#fb958b"
     PRIMARY = "#d3c2aa"
     PRIMARY_DARK = "#973232"
-    PRIMARY_MUTED = "#2c2f30ff"
     PRIMARY_MUTED = "#131c26"
     FOREGROUND = "#ffffff"
     INACTIVE = PRIMARY_MUTED
