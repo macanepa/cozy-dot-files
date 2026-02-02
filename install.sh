@@ -148,8 +148,8 @@ wal -b 232A2E -i ~/Wallpaper/fog_forest_2.png > /dev/null 2>&1
 echo "Theme 4 ../done"
 
 echo "Installation is complete!"
-echo "The system will restart in 5 seconds to apply the changes and start using SDDM."
-sleep 5
+# echo "The system will restart in 5 seconds to apply the changes and start using SDDM."
+# sleep 5
 
 # Restart the system
 # sudo reboot
