@@ -103,6 +103,13 @@ print_info "Installing dependencies..."
 yay -S --noconfirm --needed qtile python-psutil pywal-git picom dunst zsh starship mpd ncmpcpp playerctl brightnessctl alacritty pfetch htop flameshot thunar roficlip rofi ranger neovim vim feh sddm rofi-greenclip
 sudo pacman -S --noconfirm --needed git github-cli vim ranger picom dunst rofi flameshot feh arandr thunar thunar-archive-plugin engrampa lxappearance playerctl tmux rclone fuse3 man virt-viewer xorg-xkill btop network-manager-applet blueman
 sudo pacman -S --noconfirm --needed python-mpris2 python-dbus-next python-dbus-fast
+
+# Qtile scratchpad & desktop integration deps (sound/calendar/AI dropdowns, extra terminal)
+sudo pacman -S --noconfirm --needed pavucontrol aichat calcurse kitty cava helvum gsimplecal gnome-themes-extra polkit-gnome
+
+# Fonts referenced by the qtile bar and terminal (CJK, emoji, Nerd Fonts)
+sudo pacman -S --noconfirm --needed noto-fonts-cjk noto-fonts-emoji ttf-cascadia-code-nerd
+yay -S --noconfirm --needed ttf-poppins
 clear
 
 # Install laptop-specific packages if detected

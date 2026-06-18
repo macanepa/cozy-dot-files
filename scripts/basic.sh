@@ -29,13 +29,27 @@ sudo pacman -S --noconfirm --needed \
     man \
     virt-viewer \
     xorg-xkill \
-    btop
+    btop \
+    ripgrep \
+    fastfetch \
+    cmatrix \
+    nmap \
+    img2pdf \
+    nano \
+    wget
 
 # Python dependencies for Qtile widgets
 sudo pacman -S --noconfirm --needed \
     python-mpris2 \
     python-dbus-next \
     python-dbus-fast
+
+# AUR extras: clipboard manager + terminal markdown viewer (requires yay from install.sh)
+if command -v yay &> /dev/null; then
+    yay -S --noconfirm --needed clipster mdcat
+else
+    echo "yay not found, skipping AUR extras (clipster, mdcat)"
+fi
 
 # Camera controls (if you have a webcam)
 if lsusb | grep -qi "camera\|webcam"; then

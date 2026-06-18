@@ -138,6 +138,12 @@ alias ga='git add'
 alias gc='git commit -m'
 alias gp='git push origin master'
 
+# AI
+alias ai='aichat --session'
+alias do='aichat -e'
+alias ais='aichat --serve'
+alias claude='~/.local/bin/claude'
+
 #emacs
 alias emacs="emacsclient -c -a 'emacs'"
 
@@ -145,4 +151,8 @@ alias emacs="emacsclient -c -a 'emacs'"
 cat ~/.cache/wal/sequences
 export STARSHIP_LOG="error"
 eval "$(starship init zsh)"
+
+# Machine-local overrides (conda, work VPN, machine-specific PATHs, LM Studio, etc.)
+# Keep machine/work-specific config OUT of this public repo — put it in ~/.zshrc.local
+[ -f ~/.zshrc.local ] && source ~/.zshrc.local
 

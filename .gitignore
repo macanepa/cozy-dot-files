@@ -1,0 +1,9 @@
+# Python bytecode (qtile compiles configs at runtime)
+__pycache__/
+*.pyc
+
+# Tool-generated backups
+*.bak
+
+# Machine-local shell overrides (never commit machine/work-specific config)
+.zshrc.local
