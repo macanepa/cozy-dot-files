@@ -3,6 +3,10 @@
 # Cozytile Autostart Script
 # This script runs once when Qtile starts
 
+# Inject the X session env into systemd/D-Bus so user services
+# (xdg-desktop-portal, polkit agent, etc.) have DISPLAY/XAUTHORITY and work
+dbus-update-activation-environment --systemd --all 2>/dev/null
+
 # ─────────────────────────────────────────────────────────────────
 #                      Monitor Configuration
 # ─────────────────────────────────────────────────────────────────
@@ -83,6 +87,21 @@ if command -v rclone &> /dev/null; then
     fi
 fi
 
+# Mount Google Drive if rclone is configured
+if command -v rclone &> /dev/null; then
+    if rclone listremotes 2>/dev/null | grep -q "GoogleDrive:"; then
+        # Check if already mounted
+        if ! mountpoint -q "$HOME/GoogleDrive" 2>/dev/null; then
+            mkdir -p "$HOME/GoogleDrive"
+            rclone --vfs-cache-mode writes mount GoogleDrive: "$HOME/GoogleDrive" &
+            sleep 2
+            if mountpoint -q "$HOME/GoogleDrive" 2>/dev/null; then
+                notify-send "Google Drive Connected" "Google Drive successfully mounted."
+            fi
+        fi
+    fi
+fi
+
 # ─────────────────────────────────────────────────────────────────
 #                     Laptop-Specific Features
 # ─────────────────────────────────────────────────────────────────
@@ -95,5 +114,6 @@ fi
 # ─────────────────────────────────────────────────────────────────
 #                      Polkit Agent (Optional)
 # ─────────────────────────────────────────────────────────────────
-# Uncomment if you need polkit authentication dialogs
-# /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 & disown
+# PolicyKit auth agent: required for GUIs that request root privileges
+# (firewall-config, gnome-disks, etc.). Needs the 'polkit-gnome' package.
+/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 & disown

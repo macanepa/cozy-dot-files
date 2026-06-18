@@ -6,9 +6,17 @@ from .functions import (
     toggle_dropdown_htop,
 )
 import os
+import shutil
 
 mod = "mod4"
 terminal = "alacritty"
+
+# Browser launched by mod+b: first available in order of preference
+# (brave > firefox > chrome). Resolved at config load via shutil.which.
+browser = next(
+    (b for b in ("brave", "firefox", "google-chrome-stable", "google-chrome") if shutil.which(b)),
+    "brave",
+)
 
 config_dir = os.path.dirname(__file__)
 script_path = os.path.abspath(os.path.join(config_dir, "../scripts/change_volume.sh"))
@@ -66,7 +74,7 @@ keys = [
     ), desc="Run Rofi clipboard"),
     Key([mod, "shift"], "s", lazy.spawn("flameshot gui"), desc="Take Screenshot"),
     Key([mod], "e", lazy.spawn("thunar"), desc="Open file manager"),
-    Key([mod], "b", lazy.spawn("brave"), desc="Open browser"),
+    Key([mod], "b", lazy.spawn(browser), desc="Open browser"),
     
     # ─────────────────────────────────────────────────────────────
     #                    Dropdown Terminals
