@@ -9,7 +9,9 @@ def autostart():
     subprocess.call([home])
 
 
-@hook.subscribe.startup_once
+# startup (not startup_once) so the watcher is rearmed on every restart too,
+# not just on a cold boot. start_battery_watch() guards against double-start.
+@hook.subscribe.startup
 def _battery_watch():
     from libqtile import qtile
     from .functions import start_battery_watch

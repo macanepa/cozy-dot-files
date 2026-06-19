@@ -14,6 +14,7 @@ from .functions import (
     power_mode_text,
 )
 import os
+import json
 
 from .groups import groups1, groups2
 
@@ -46,6 +47,7 @@ GREEN = {
     "highlight": BASE.HIGHLIGHT,            # '#202222'
     "accent":   BASE.FOREGROUND,            # unused in green; kept for symmetry
     "primary":  COLORS.PRIMARY,             # '#d3c2aa'
+    "ai":       "#D97757",                  # Claude-logo clay (baked into claude.png)
     "assets":   "",
 }
 
@@ -58,8 +60,51 @@ RED = {
     "highlight": "#2A1416",
     "accent":   "#8E1F26",
     "primary":  "#D8A89A",
+    "ai":       "#E08C7F",                  # coral Claude logo (baked into red/claude.png)
     "assets":   "red/",
 }
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  Theme registry.
+#
+#  GREEN and RED are the two built-in palettes. Extra, user-generated themes are
+#  produced by scripts/theme_gen.py (which derives a full palette from one colour
+#  and recolours every bar PNG into Assets/<name>/) and stored in themes.json.
+#  The currently-selected *base* theme name is persisted in .current_theme so the
+#  choice survives a qtile restart; the low-battery RED alert always overrides it.
+# ─────────────────────────────────────────────────────────────────────────────
+BUILTIN = {"green": GREEN, "red": RED}
+_THEME_FILE = os.path.expanduser("~/.config/qtile/.current_theme")
+_THEMES_JSON = os.path.expanduser("~/.config/qtile/themes.json")
+
+
+def load_user_themes():
+    try:
+        with open(_THEMES_JSON) as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def load_palette(name):
+    """Resolve a theme name to a palette dict (built-in or user-generated)."""
+    if name in BUILTIN:
+        return BUILTIN[name]
+    return load_user_themes().get(name, GREEN)
+
+
+def current_theme_name():
+    try:
+        with open(_THEME_FILE) as f:
+            return f.read().strip() or "green"
+    except Exception:
+        return "green"
+
+
+def current_base_palette():
+    """The non-alert palette to render (the user's selected base theme)."""
+    return load_palette(current_theme_name())
 
 
 def _asset(C, name):
@@ -132,7 +177,7 @@ def make_bar(C):
             ),
             widget.CurrentLayout(
                 mode="icon",
-                custom_icon_paths=["~/.config/qtile/Assets/layout"],
+                custom_icon_paths=[f"~/.config/qtile/Assets/{C['assets']}layout"],
                 background=C["bg2"],
                 scale=0.50,
             ),
@@ -223,7 +268,8 @@ def make_bar(C):
                 markup=True,
                 font="JetBrainsMono Nerd Font",
                 fontsize=14,
-                padding=12,
+                padding=8,
+                foreground=C["fg"],
                 background=C["bg2"],
                 mouse_callbacks={
                     "Button1": lazy.spawn(
@@ -252,14 +298,14 @@ def make_bar(C):
                 scroll_delay=5,
                 scroll_interval=0.25,
                 scroll_step=15,
-                fontsize=15,
-                padding=18,
+                fontsize=13,
+                padding=10,
                 foreground=C["fg"],
                 background=C["bg2"],
             ),
             widget.GroupBox(
                 font="JetBrainsMono Nerd Font",
-                fontsize=23,
+                fontsize=18,
                 borderwidth=3,
                 highlight_method="block",
                 active=C["fg"],
@@ -327,13 +373,11 @@ def make_bar(C):
                 padding=10,
                 mouse_callbacks={"Button1": toggle_dropdown_calendar},
             ),
-            widget.TextBox(
-                font="CaskaydiaCove Nerd Font",
-                text="",
+            widget.Image(
+                filename=_asset(C, "claude.png"),
                 background=C["bg"],
-                foreground=C["fg"],
-                fontsize=18,
-                padding=10,
+                margin_y=6,
+                margin_x=9,
                 mouse_callbacks={"Button1": toggle_dropdown_ai},
             ),
             widget.Spacer(
@@ -358,4 +402,4 @@ def make_screens(C):
     ]
 
 
-screens = make_screens(GREEN)
+screens = make_screens(current_base_palette())

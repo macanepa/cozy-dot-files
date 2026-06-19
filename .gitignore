@@ -7,3 +7,6 @@ __pycache__/
 
 # Machine-local shell overrides (never commit machine/work-specific config)
 .zshrc.local
+
+# Runtime theme selection (per-machine; defaults to green if absent)
+.config/qtile/.current_theme

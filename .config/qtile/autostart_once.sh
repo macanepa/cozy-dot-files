@@ -6,9 +6,13 @@ dbus-update-activation-environment --systemd --all
 
 xrandr --output HDMI-0 --primary --mode 1920x1080 --pos 1920x0 --rotate normal --output DP-0 --off --output DP-1 --off --output DP-2 --mode 1920x1080 --pos 0x0 --rotate normal --output DP-3 --off --output DP-4 --off --output DP-5 --off
 
-# Apply wallpaper using wal
-# wal -i ~/Wallpaper/claudio-testa-FrlCwXwbwkk-unsplash.jpg &&
-feh --bg-scale ~/Wallpaper/claudio-testa-FrlCwXwbwkk-unsplash.jpg
+# Wallpaper: per-theme (~/.config/qtile/wallpapers/<theme>.{png,jpg}) if present, else default
+_theme=$(cat ~/.config/qtile/.current_theme 2>/dev/null || echo green)
+_wp=""
+for _ext in png jpg jpeg; do
+  [ -f "$HOME/.config/qtile/wallpapers/$_theme.$_ext" ] && _wp="$HOME/.config/qtile/wallpapers/$_theme.$_ext" && break
+done
+[ -n "$_wp" ] && feh --bg-fill "$_wp" || feh --bg-scale ~/Wallpaper/claudio-testa-FrlCwXwbwkk-unsplash.jpg
 
 # Start picom
 picom --config ~/.config/picom/picom.conf &

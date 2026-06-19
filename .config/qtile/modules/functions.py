@@ -34,7 +34,7 @@ def toggle_dropdown_sound(qtile):
 #   proven to keep the bar pixel-perfect, so rebuilding from a clean RED
 #   palette renders flawlessly.
 # ─────────────────────────────────────────────────────────────
-LOW_BAT_PCT = 20        # alert at/below this %, while discharging
+LOW_BAT_PCT = 20        # Red alert when battery <= this %, while discharging.
 PREVIEW_RED = False     # TEMP: forces the bar red NOW so you can see it. Set False for real behavior.
 
 # Tracks whether we last rendered the bar in low (red) mode, so we only
@@ -47,16 +47,17 @@ def set_bar_mode(qtile, red):
 
     Replace the live screens definition with a freshly palette-built one and
     ask qtile to rebuild every bar from it. reconfigure_screens() finalises the
-    old bar (including its Systray) and configures the new one, all on qtile's
-    own event loop, so rendering stays correct.
+    old bar (including its tray) and configures the new one, all on qtile's own
+    event loop, so rendering stays correct.
 
-    The Systray is a process-wide singleton (modules.screens._SYSTRAY) reused
-    across every rebuild, so the single-Systray constraint is never violated and
-    the tray survives the swap (see modules/screens.py for the full rationale).
+    ``red`` True  -> the low-battery RED alert palette (always wins).
+    ``red`` False -> the user's selected *base* theme (green or any generated
+                     theme), resolved from screens.current_base_palette().
     """
     import modules.screens as S
 
-    qtile.config.screens = S.make_screens(S.RED if red else S.GREEN)
+    pal = S.RED if red else S.current_base_palette()
+    qtile.config.screens = S.make_screens(pal)
     qtile.reconfigure_screens()
 
 
@@ -67,6 +68,52 @@ def paint_red(qtile):
 
 def restore(qtile):
     set_bar_mode(qtile, False)
+
+
+def apply_theme(qtile, name):
+    """Select `name` as the base theme, persist it, and render it now.
+
+    Persists the choice to ~/.config/qtile/.current_theme so it survives a
+    restart. If the battery is currently low the RED alert keeps priority and
+    the new theme appears once the battery recovers; otherwise it shows at once.
+    Called over qtile IPC by scripts/theme-picker.sh.
+    """
+    theme_file = os.path.expanduser("~/.config/qtile/.current_theme")
+    with open(theme_file, "w") as f:
+        f.write(name)
+    low = _battery_is_low()
+    _bat_state["low"] = low
+    set_bar_mode(qtile, low)
+    _set_wallpaper(name)
+    # Push the same palette to the rest of the desktop (terminal, notifications,
+    # calendar) so the theme is transversal, not just the bar.
+    import modules.screens as S
+    from .app_theme import apply_app_themes
+    apply_app_themes(S.load_palette(name))
+    # Full qtile restart so the whole config reloads cleanly on the new theme
+    # (the user's "mod+ctrl+r"). reload_config() would NOT do it: config.py
+    # imports `screens` at module top level and Python caches that, so a reload
+    # keeps the previous palette. Deferred so this IPC call returns first; the
+    # app + wallpaper changes above are written to files and survive the restart.
+    qtile.call_later(0.3, qtile.restart)
+    return name
+
+
+def _set_wallpaper(name):
+    """Set the desktop wallpaper for a theme, if one exists.
+
+    Looks for ~/.config/qtile/wallpapers/<name>.{png,jpg,jpeg} and applies it
+    with feh. Themes without a dedicated wallpaper keep the current one. The
+    low-battery RED alert never touches the wallpaper (it only repaints the
+    bar), so the desktop always shows the selected base theme's wallpaper.
+    """
+    import subprocess
+    wdir = os.path.expanduser("~/.config/qtile/wallpapers")
+    for ext in ("png", "jpg", "jpeg"):
+        p = os.path.join(wdir, f"{name}.{ext}")
+        if os.path.exists(p):
+            subprocess.Popen(["feh", "--bg-fill", p])
+            return
 
 
 def _read_battery():
@@ -105,14 +152,17 @@ def start_battery_watch(qtile):
 #     Performance-mode indicator (AMD platform_profile)
 # ─────────────────────────────────────────────────────────────
 def power_mode_text():
+    """Return ONLY a nerd-font icon for the current AMD platform_profile.
+
+    No label, no per-mode colour: the GenPollText widget paints it in the
+    theme's ``fg``, so it matches every other bar icon.
+    """
     try:
         prof = open("/sys/firmware/acpi/platform_profile").read().strip()
     except Exception:
         prof = "?"
-    table = {
-        "low-power":   ("", "#788E7D", "Ahorro"),        # leaf   (verde)
-        "balanced":    ("", "#b2bebc", "Equilibrado"),   # scale  (claro)
-        "performance": ("", "#fb958b", "Máximo"),   # bolt   (coral)
-    }
-    icon, color, label = table.get(prof, ("", "#607767", prof))
-    return f'<span foreground="{color}">{icon}  {label}</span>'
+    return {
+        "low-power":   "\uf06c",   # leaf  -> Ahorro
+        "balanced":    "\uf24e",   # scale -> Equilibrado
+        "performance": "\uf0e7",   # bolt  -> Maximo
+    }.get(prof, "\uf059")          # question -> unknown

@@ -1,0 +1,46 @@
+{
+  "ocean": {
+    "bg": "#060D16",
+    "bg2": "#111D2C",
+    "fg": "#577BA8",
+    "fg_light": "#B3CCEA",
+    "highlight": "#111D2C",
+    "accent": "#0F4F9F",
+    "primary": "#91B5E1",
+    "ai": "#5A97E2",
+    "assets": "ocean/"
+  },
+  "blanco": {
+    "bg": "#1C1D1E",
+    "bg2": "#2C2E2F",
+    "fg": "#C8CCCC",
+    "fg_light": "#F2F4F4",
+    "highlight": "#2C2E2F",
+    "accent": "#B4B9B9",
+    "primary": "#DCDEDE",
+    "ai": "#F2F4F4",
+    "assets": "blanco/"
+  },
+  "negro": {
+    "bg": "#070708",
+    "bg2": "#161617",
+    "fg": "#A8ACAD",
+    "fg_light": "#E4E6E6",
+    "highlight": "#161617",
+    "accent": "#787C7D",
+    "primary": "#C4C6C6",
+    "ai": "#E4E6E6",
+    "assets": "negro/"
+  },
+  "naranjo": {
+    "bg": "#160F06",
+    "bg2": "#2E200F",
+    "fg": "#BF8640",
+    "fg_light": "#ECD1B1",
+    "highlight": "#2E200F",
+    "accent": "#A05E0D",
+    "primary": "#E3BD8F",
+    "ai": "#F0A64C",
+    "assets": "naranjo/"
+  }
+}

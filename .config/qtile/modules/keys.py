@@ -11,6 +11,7 @@ script_path = os.path.abspath(os.path.join(config_dir, "../scripts/change_volume
 mute_path = os.path.abspath(os.path.join(config_dir, "../scripts/toggle_mute.sh"))
 bright_path = os.path.abspath(os.path.join(config_dir, "../scripts/change_brightness.sh"))
 mic_path = os.path.abspath(os.path.join(config_dir, "../scripts/toggle_mic.sh"))
+theme_picker = os.path.abspath(os.path.join(config_dir, "../scripts/theme-picker.sh"))
 
 keys = [
     # A list of available commands that can be bound to keys can be found
@@ -80,6 +81,7 @@ keys = [
     Key([mod, "shift"], "s", lazy.spawn("flameshot gui"), desc="Take Screenshot"),
     Key([], "Print", lazy.spawn("flameshot gui"), desc="Screenshot (PrintScreen)"),
     Key([mod], "t", lazy.window.toggle_floating()),
+    Key([mod, "shift"], "t", lazy.spawn(theme_picker), desc="Pick/create bar theme"),
     # Sound
     # Alsa Mixer
     # Key([], "XF86AudioLowerVolume", lazy.spawn("amixer sset Master,0 5%-")),
