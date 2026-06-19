@@ -40,12 +40,12 @@ if echo "$probe" | grep -qiE 'no devices|impossible to'; then
 fi
 ok "Reader detected."
 
-# 3) Enrol a fingerprint (INTERACTIVE — swipe/press your finger several times)
-say "3) Enrolling your fingerprint — follow the prompts (touch the sensor repeatedly)"
-sudo -u "$REAL_USER" fprintd-enroll || { warn "Enrolment failed/cancelled; PAM left untouched."; exit 1; }
-ok "Fingerprint enrolled."
+# NOTE: enrolment is NOT done here. fprintd's polkit policy denies enrolment from
+# a `sudo -u` context (no active session), so it must run inside YOUR own desktop
+# session — see the final instructions. PAM uses `sufficient`, so it is safe to
+# configure before any finger is enrolled (it simply falls back to your password).
 
-# 4) Wire PAM — safely (sufficient => password remains a full fallback)
+# 3) Wire PAM — safely (sufficient => password remains a full fallback)
 configure_pam() {
     local file="$1"
     [ -f "$file" ] || { warn "$file not found, skipping"; return; }
@@ -56,13 +56,17 @@ configure_pam() {
     sed -i '0,/^auth/ s/^auth/auth      sufficient  pam_fprintd.so\nauth/' "$file"
     if grep -q 'pam_fprintd.so' "$file"; then ok "$file configured (backup: ${file}.bak.*)"; else warn "could not edit $file"; fi
 }
-say "4) Configuring PAM (login + sudo)"
+say "3) Configuring PAM (login + sudo)"
 configure_pam /etc/pam.d/sddm     # graphical login
 configure_pam /etc/pam.d/sudo     # sudo in the terminal
 
-# 5) Done
-say "DONE"
-echo "  - Lock the screen / open a new sudo prompt and you should be able to use your finger."
-echo "  - Your password ALWAYS still works (sufficient). To undo: restore the *.bak.* PAM files"
-echo "    and run 'fprintd-delete $REAL_USER'."
-echo "  - Manage prints later:  fprintd-enroll (add) | fprintd-list $REAL_USER | fprintd-delete $REAL_USER"
+# 4) Done
+say "DONE — one manual step left: ENROL YOUR FINGER"
+echo "  Run this in a NORMAL terminal (NOT via sudo), inside your desktop session:"
+echo "      fprintd-enroll"
+echo "  (touch the sensor repeatedly until it says 'enroll-completed')."
+echo ""
+echo "  Then lock the screen or open a new sudo prompt and use your finger."
+echo "  Your password ALWAYS still works (sufficient). To undo: restore the *.bak.* PAM"
+echo "  files and run 'fprintd-delete $REAL_USER'."
+echo "  Manage prints:  fprintd-enroll (add) | fprintd-list $REAL_USER | fprintd-delete $REAL_USER"
