@@ -69,6 +69,9 @@ fi
 # Greenclip clipboard daemon
 pgrep -x greenclip > /dev/null || greenclip daemon &
 
+# Now-playing notifier (dunst popup on track change)
+pgrep -f now_playing.sh > /dev/null || ~/.config/qtile/scripts/now_playing.sh &
+
 # ─────────────────────────────────────────────────────────────────
 #                         Cloud Storage
 # ─────────────────────────────────────────────────────────────────
