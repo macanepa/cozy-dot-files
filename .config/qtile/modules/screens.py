@@ -81,10 +81,9 @@ def _asset(C, name):
 #  icons against bar.background when its own background is transparent, so it
 #  blends with whatever palette the bar currently uses.
 # ─────────────────────────────────────────────────────────────────────────────
-_SYSTRAY = widget.Systray(
-    background=BASE.BACKGROUND,
-    fontsize=2,
-)
+# Tray: StatusNotifier (SNI) instead of the legacy Systray — it survives
+# reconfigure_screens() (Systray allows only one instance and crashes on rebuild).
+# Built fresh per bar inside make_bar so its background follows the palette.
 
 
 def make_bar(C):
@@ -96,7 +95,7 @@ def make_bar(C):
                 background=C["bg"],
             ),
             widget.Image(
-                filename="~/.config/qtile/Assets/launch_Icon.png",
+                filename=_asset(C, "launch_Icon.png"),
                 margin=2,
                 background=C["bg"],
                 mouse_callbacks={"Button1": lazy.spawn(f"rofi -terminal {terminal} -show drun")},
@@ -166,7 +165,10 @@ def make_bar(C):
             widget.Image(
                 filename=_asset(C, "3.png"),
             ),
-            _SYSTRAY,
+            widget.StatusNotifier(
+                background=C["bg"],
+                padding=6,
+            ),
             widget.TextBox(
                 text=" ",
                 background=C["bg"],
@@ -326,8 +328,8 @@ def make_bar(C):
                 mouse_callbacks={"Button1": toggle_dropdown_calendar},
             ),
             widget.TextBox(
-                font="Ubuntu Mono",
-                text="✨",
+                font="CaskaydiaCove Nerd Font",
+                text="",
                 background=C["bg"],
                 foreground=C["fg"],
                 fontsize=18,
