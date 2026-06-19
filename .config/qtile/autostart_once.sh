@@ -1,122 +1,27 @@
 #!/bin/bash
 
-# Cozytile Autostart Script
-# This script runs once when Qtile starts
+# Inyectar el entorno de sesión en systemd/D-Bus para que los servicios de usuario
+# (xdg-desktop-portal, etc.) tengan DISPLAY/XAUTHORITY y funcionen
+dbus-update-activation-environment --systemd --all
 
-# Inject the X session env into systemd/D-Bus so user services
-# (xdg-desktop-portal, polkit agent, etc.) have DISPLAY/XAUTHORITY and work
-dbus-update-activation-environment --systemd --all 2>/dev/null
+xrandr --output HDMI-0 --primary --mode 1920x1080 --pos 1920x0 --rotate normal --output DP-0 --off --output DP-1 --off --output DP-2 --mode 1920x1080 --pos 0x0 --rotate normal --output DP-3 --off --output DP-4 --off --output DP-5 --off
 
-# ─────────────────────────────────────────────────────────────────
-#                      Monitor Configuration
-# ─────────────────────────────────────────────────────────────────
-# Auto-detect and configure monitors
-# You can customize this section for your specific setup
+# Apply wallpaper using wal
+# wal -i ~/Wallpaper/claudio-testa-FrlCwXwbwkk-unsplash.jpg &&
+feh --bg-scale ~/Wallpaper/claudio-testa-FrlCwXwbwkk-unsplash.jpg
 
-# Get connected monitors
-connected_monitors=$(xrandr --query | grep " connected" | cut -d" " -f1)
-monitor_count=$(echo "$connected_monitors" | wc -l)
-
-if [ "$monitor_count" -gt 1 ]; then
-    # Multi-monitor setup - detect primary and configure
-    # Customize this for your specific monitors
-    primary=$(echo "$connected_monitors" | head -n1)
-    secondary=$(echo "$connected_monitors" | tail -n1)
-    
-    # Try to set up dual monitors side by side
-    xrandr --output "$primary" --primary --auto --output "$secondary" --auto --right-of "$primary" 2>/dev/null
-else
-    # Single monitor - just use auto
-    xrandr --auto 2>/dev/null
-fi
-
-# ─────────────────────────────────────────────────────────────────
-#                         Wallpaper
-# ─────────────────────────────────────────────────────────────────
-# Apply wallpaper (uses feh, can also use pywal with: wal -i <wallpaper>)
-DEFAULT_WALLPAPER="$HOME/Wallpaper/claudio-testa-FrlCwXwbwkk-unsplash.jpg"
-
-if [ -f "$DEFAULT_WALLPAPER" ]; then
-    feh --bg-scale "$DEFAULT_WALLPAPER"
-elif [ -d "$HOME/Wallpaper" ]; then
-    # Fallback to first image in Wallpaper directory
-    first_wallpaper=$(find "$HOME/Wallpaper" -type f \( -iname "*.jpg" -o -iname "*.png" \) | head -n1)
-    [ -n "$first_wallpaper" ] && feh --bg-scale "$first_wallpaper"
-fi
-
-# ─────────────────────────────────────────────────────────────────
-#                         Compositor
-# ─────────────────────────────────────────────────────────────────
-# Start picom compositor for transparency and effects
-pkill -x picom 2>/dev/null
-sleep 0.5
+# Start picom
 picom --config ~/.config/picom/picom.conf &
 
-# ─────────────────────────────────────────────────────────────────
-#                       System Tray Apps
-# ─────────────────────────────────────────────────────────────────
-# Network Manager applet
-pgrep -x nm-applet > /dev/null || nm-applet &
+nm-applet &
 
-# Bluetooth manager (if bluetooth is available)
-if command -v blueman-applet &> /dev/null && [ -d "/sys/class/bluetooth" ]; then
-    pgrep -x blueman-applet > /dev/null || blueman-applet &
-fi
+# PolicyKit auth agent: necesario para GUIs que piden permisos root (firewall-config, etc.)
+/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 & disown
 
-# ─────────────────────────────────────────────────────────────────
-#                        Clipboard Manager
-# ─────────────────────────────────────────────────────────────────
-# Greenclip clipboard daemon
-pgrep -x greenclip > /dev/null || greenclip daemon &
+greenclip daemon &
 
 # Now-playing notifier (dunst popup on track change)
 pgrep -f now_playing.sh > /dev/null || ~/.config/qtile/scripts/now_playing.sh &
 
-# ─────────────────────────────────────────────────────────────────
-#                         Cloud Storage
-# ─────────────────────────────────────────────────────────────────
-# Mount OneDrive if rclone is configured
-if command -v rclone &> /dev/null; then
-    if rclone listremotes 2>/dev/null | grep -q "OneDrive:"; then
-        # Check if already mounted
-        if ! mountpoint -q "$HOME/OneDrive" 2>/dev/null; then
-            mkdir -p "$HOME/OneDrive"
-            rclone --vfs-cache-mode writes mount OneDrive: "$HOME/OneDrive" &
-            sleep 2
-            if mountpoint -q "$HOME/OneDrive" 2>/dev/null; then
-                notify-send "OneDrive Connected" "Microsoft OneDrive successfully mounted."
-            fi
-        fi
-    fi
-fi
-
-# Mount Google Drive if rclone is configured
-if command -v rclone &> /dev/null; then
-    if rclone listremotes 2>/dev/null | grep -q "GoogleDrive:"; then
-        # Check if already mounted
-        if ! mountpoint -q "$HOME/GoogleDrive" 2>/dev/null; then
-            mkdir -p "$HOME/GoogleDrive"
-            rclone --vfs-cache-mode writes mount GoogleDrive: "$HOME/GoogleDrive" &
-            sleep 2
-            if mountpoint -q "$HOME/GoogleDrive" 2>/dev/null; then
-                notify-send "Google Drive Connected" "Google Drive successfully mounted."
-            fi
-        fi
-    fi
-fi
-
-# ─────────────────────────────────────────────────────────────────
-#                     Laptop-Specific Features
-# ─────────────────────────────────────────────────────────────────
-# Battery monitoring (only on laptops)
-if [ -d "/sys/class/power_supply/BAT0" ] || [ -d "/sys/class/power_supply/BAT1" ]; then
-    # Start low battery notifier if not already running
-    pgrep -f "low_bat_notifier.sh" > /dev/null || ~/.config/qtile/scripts/low_bat_notifier.sh &
-fi
-
-# ─────────────────────────────────────────────────────────────────
-#                      Polkit Agent (Optional)
-# ─────────────────────────────────────────────────────────────────
-# PolicyKit auth agent: required for GUIs that request root privileges
-# (firewall-config, gnome-disks, etc.). Needs the 'polkit-gnome' package.
-/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 & disown
+rclone --vfs-cache-mode writes mount OneDrive: ~/OneDrive & notify-send "OneDrive connected" "Microsoft OneDrive successfully mounted."
+rclone --vfs-cache-mode writes mount GoogleDrive: ~/GoogleDrive & notify-send "GoogleDrive connected" "Google Drive successfully mounted."

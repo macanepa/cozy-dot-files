@@ -45,31 +45,13 @@ def dropdown_geometry(
     term_height_px,
     margin_top_px,
     margin_right_px,
-    screen_width_px=None,
-    screen_height_px=None,
+    screen_width_px=1920,
+    screen_height_px=1080,
 ):
-    """
-    Calculate dropdown terminal geometry as fractions of screen size.
-    
-    If screen dimensions are not provided, uses reasonable defaults that work
-    for most common resolutions (1920x1080 and similar).
-    
-    For dynamic screen detection, this could be enhanced to query xrandr,
-    but static values provide more predictable behavior.
-    """
-    # Default to 1920x1080 if not specified
-    # These work well for most common resolutions
-    if screen_width_px is None:
-        screen_width_px = 1920
-    if screen_height_px is None:
-        screen_height_px = 1080
-    
-    # Calculate as fractions (works for any resolution when values are reasonable)
-    width_frac = min(term_width_px / screen_width_px, 0.8)  # Cap at 80% width
-    height_frac = min(term_height_px / screen_height_px, 0.9)  # Cap at 90% height
-    x_frac = max((screen_width_px - term_width_px - margin_right_px) / screen_width_px, 0.1)
-    y_frac = max(margin_top_px / screen_height_px, 0)
-    
+    width_frac = term_width_px / screen_width_px
+    height_frac = term_height_px / screen_height_px
+    x_frac = (screen_width_px - term_width_px - margin_right_px) / screen_width_px
+    y_frac = margin_top_px / screen_height_px
     return {
         "width": round(width_frac, 3),
         "height": round(height_frac, 3),
@@ -78,23 +60,9 @@ def dropdown_geometry(
     }
 
 
-# Dropdown geometries for different purposes
-geom_chatbot = dropdown_geometry(
+geom = dropdown_geometry(
     term_width_px=600, term_height_px=800, margin_top_px=0, margin_right_px=58
 )
-
-geom_calendar = dropdown_geometry(
-    term_width_px=600, term_height_px=800, margin_top_px=0, margin_right_px=58
-)
-
-geom_bluetooth = dropdown_geometry(
-    term_width_px=600, term_height_px=800, margin_top_px=0, margin_right_px=58
-)
-
-geom_sound = dropdown_geometry(
-    term_width_px=400, term_height_px=600, margin_top_px=0, margin_right_px=58
-)
-
 
 groups += [
     ScratchPad(
@@ -105,48 +73,37 @@ groups += [
                 "alacritty --class wiwi --option font.size=10 -e zsh -ic claude",
                 opacity=1,
                 on_focus_lost_hide=False,
-                **geom_chatbot
+                **geom
             ),
             DropDown(
                 "calendar",
                 "alacritty -e calcurse",
                 opacity=1,
                 on_focus_lost_hide=True,
-                **geom_calendar
+                **geom
             ),
             DropDown(
                 "bluetooth",
                 "blueman-manager",
                 opacity=1,
                 on_focus_lost_hide=True,
-                **geom_bluetooth
+                **dropdown_geometry(
+                    term_width_px=600,
+                    term_height_px=800,
+                    margin_top_px=0,
+                    margin_right_px=58,
+                )
             ),
             DropDown(
                 "sound",
                 "pavucontrol",
                 opacity=1,
                 on_focus_lost_hide=True,
-                **geom_sound
-            ),
-            # Additional useful dropdowns
-            DropDown(
-                "terminal",
-                "alacritty",
-                opacity=0.95,
-                on_focus_lost_hide=True,
                 **dropdown_geometry(
-                    term_width_px=1200, term_height_px=700, 
-                    margin_top_px=50, margin_right_px=360
-                )
-            ),
-            DropDown(
-                "htop",
-                "alacritty -e htop",
-                opacity=0.95,
-                on_focus_lost_hide=True,
-                **dropdown_geometry(
-                    term_width_px=1000, term_height_px=600, 
-                    margin_top_px=50, margin_right_px=460
+                    term_width_px=400,
+                    term_height_px=600,
+                    margin_top_px=0,
+                    margin_right_px=58,
                 )
             ),
         ],

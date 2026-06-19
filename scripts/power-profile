@@ -1,0 +1,21 @@
+#!/bin/bash
+# Set/get the AMD-ThinkPad platform_profile (SoC power mode).
+# Installed root-owned at /usr/local/bin/power-profile; called via a tight
+# NOPASSWD sudoers rule so the qtile bar widget can switch modes unprivileged.
+# Input is validated, so the rule can only ever set one of the 3 valid profiles.
+PP=/sys/firmware/acpi/platform_profile
+
+case "$1" in
+    set)
+        case "$2" in
+            low-power|balanced|performance)
+                printf '%s\n' "$2" > "$PP" ;;
+            *)
+                echo "invalid profile: $2" >&2; exit 1 ;;
+        esac ;;
+    get)
+        cat "$PP" ;;
+    *)
+        echo "usage: power-profile {get | set <low-power|balanced|performance>}" >&2
+        exit 1 ;;
+esac
