@@ -102,7 +102,7 @@ groups += [
         [
             DropDown(
                 "chatbot",
-                "alacritty --class wiwi --option font.size=10 -e aichat --session",
+                "alacritty --class wiwi --option font.size=10 -e zsh -ic claude",
                 opacity=1,
                 on_focus_lost_hide=False,
                 **geom_chatbot

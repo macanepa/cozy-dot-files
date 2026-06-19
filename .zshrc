@@ -143,6 +143,7 @@ alias ai='aichat --session'
 alias do='aichat -e'
 alias ais='aichat --serve'
 alias claude='~/.local/bin/claude'
+alias neofetch='fastfetch'   # neofetch is deprecated; redirect to fastfetch
 
 #emacs
 alias emacs="emacsclient -c -a 'emacs'"
