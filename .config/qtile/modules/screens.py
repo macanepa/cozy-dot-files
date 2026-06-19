@@ -317,7 +317,7 @@ def make_bar(C):
                 fontsize=13,
             ),
             widget.TextBox(
-                text="📅",
+                text="",
                 font="CaskaydiaCove Nerd Font",
                 background=C["bg"],
                 foreground=C["fg"],
@@ -327,7 +327,7 @@ def make_bar(C):
             ),
             widget.TextBox(
                 font="Ubuntu Mono",
-                text="🤖",
+                text="✨",
                 background=C["bg"],
                 foreground=C["fg"],
                 fontsize=18,

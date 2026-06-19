@@ -6,7 +6,7 @@ roman = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"]
 groups1 = ["1", "2", "3", "4"]
 groups2 = "M"
 groups = [Group(str(i), label="\ueaaa") for i in groups1] + [
-    Group(str("M"), label="🎧")
+    Group(str("M"), label="")
 ]
 
 for i in groups:
