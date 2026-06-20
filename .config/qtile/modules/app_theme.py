@@ -309,7 +309,7 @@ def theme_gtk(pal):
     base = _mix(bg, bg2, 0.35)
     sel_fg = _on(acc, bg, fgl)              # readable text on the accent fill
     border = _mix(bg2, fgl, 0.16)
-    insens_fg = _mix(bg, fgl, 0.5)
+    insens_fg = _mix(bg, fgl, 0.6)
     colors = {
         "theme_bg_color": bg, "theme_fg_color": fgl, "theme_bg2_color": bg2,
         "theme_base_color": base, "theme_text_color": fgl,

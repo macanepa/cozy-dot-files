@@ -166,9 +166,13 @@ menuitem:disabled, modelbutton:disabled { color: @insensitive_fg_color; }
    not the old near-black; brighten further on the orange hover row */
 menuitem accelerator, menuitem arrow, .accelerator,
 modelbutton .accelerator, .keycap {
-  color: @theme_fg_color; opacity: 0.55;
+  color: @insensitive_fg_color;       /* solid — no opacity, which would compound
+                                          with GTK's disabled dimming -> near black */
 }
-menuitem:hover accelerator, menuitem:focus accelerator { color: @theme_selected_fg_color; opacity: 0.85; }
+menuitem:hover accelerator, menuitem:focus accelerator { color: @theme_selected_fg_color; }
+menuitem:disabled, menuitem:disabled label, menuitem:disabled accelerator {
+  color: @insensitive_fg_color; opacity: 1;   /* stays readable even when disabled */
+}
 menu separator, popover separator, .menu separator {
   background-color: @borders_color; margin: 4px 4px; min-height: 1px;
 }
@@ -329,4 +333,16 @@ label.success, .success { color: @success_color; }
 
 /* ---- misc ----------------------------------------------------------------- */
 .app-notification, .osd { background-color: @theme_bg2_color; border-radius: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-spinner { color: @accent_color; }
+
+/* spinner: invisible while stopped (otherwise a static, non-animating spinner
+   icon lingers in the corner); only shown + spinning while actually active */
+spinner {
+  opacity: 0;
+  color: @accent_color;
+  -gtk-icon-source: -gtk-icontheme("process-working-symbolic");
+}
+spinner:checked {
+  opacity: 1;
+  animation: cozy-spin 1s steps(12) infinite;
+}
+@keyframes cozy-spin { to { -gtk-icon-transform: rotate(1turn); } }
