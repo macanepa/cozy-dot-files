@@ -33,14 +33,14 @@
     "assets": "negro/"
   },
   "naranjo": {
-    "bg": "#160F06",
-    "bg2": "#2E200F",
-    "fg": "#BF8640",
-    "fg_light": "#ECD1B1",
-    "highlight": "#2E200F",
-    "accent": "#A05E0D",
-    "primary": "#E3BD8F",
-    "ai": "#F0A64C",
+    "bg": "#141210",
+    "bg2": "#211E1A",
+    "fg": "#F59A2E",
+    "fg_light": "#F6E3CC",
+    "highlight": "#211E1A",
+    "accent": "#F7931A",
+    "primary": "#F2B868",
+    "ai": "#D97757",
     "assets": "naranjo/"
   }
 }

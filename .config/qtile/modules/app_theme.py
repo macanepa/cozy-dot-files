@@ -390,7 +390,7 @@ def theme_gtk(pal):
 # can recolour its folders without root — run scripts/icons-setup.sh once. The
 # theme then picks the Papirus folder colour nearest the palette accent. Silently
 # skipped until Papirus is present, so nothing breaks before setup.
-_PAPIRUS_HUES = [(15, "red"), (28, "deeporange"), (42, "orange"), (55, "yellow"),
+_PAPIRUS_HUES = [(15, "red"), (22, "deeporange"), (40, "orange"), (55, "yellow"),
                  (110, "green"), (170, "teal"), (195, "cyan"), (220, "blue"),
                  (250, "indigo"), (282, "violet"), (312, "magenta"), (340, "pink"),
                  (360, "red")]
@@ -412,7 +412,7 @@ def theme_icons(pal):
     pf = _h("~/.config/qtile/scripts/papirus-folders")
     if os.path.exists(pf):
         subprocess.Popen(["bash", pf, "-C", _papirus_color(pal["accent"]),
-                          "-t", "Papirus-Dark", "-o"])
+                          "-t", "Papirus-Dark", "-u"])
     try:
         subprocess.Popen(["gsettings", "set",
                           "org.gnome.desktop.interface", "icon-theme", "Papirus-Dark"])

@@ -108,10 +108,18 @@ treeview.view, columnview, .view, list {
 }
 treeview.view:hover, list row:hover, columnview row:hover { background-color: @theme_hover_color; }
 treeview.view:selected, list row:selected, columnview row:selected,
-iconview:selected, flowboxchild:selected {
+iconview:selected, flowboxchild:selected,
+.view:selected, .view:selected:focus, .view text:selected,
+.view:selected text, iconview.view:selected {
   background-color: @theme_selected_bg_color;
   color: @theme_selected_fg_color;
   border-radius: 8px;
+}
+/* keep the (orange) folder icon at full strength when selected — exo otherwise
+   tints it toward the dark selected-fg, which read as a near-black folder */
+.view:selected, iconview:selected, treeview.view:selected {
+  -gtk-icon-effect: none;
+  -gtk-icon-shadow: none;
 }
 list row { padding: 2px 4px; }
 list { background-color: transparent; }
