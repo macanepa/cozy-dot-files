@@ -1,0 +1,225 @@
+# =====================================================================
+# Cozy — GTK2 theme (legacy apps)
+# DARK theme with warm accents. Palette-agnostic.
+#
+# Every colour below is a @@TOKEN@@ that is string-substituted by the
+# theme-apply script from the active palette in themes.json. NEVER put a
+# literal hex value in this file — keep it 100% parametrised so any dark
+# palette (naranjo / ocean / blanco / negro / green / red) just works.
+#
+# Token map (all dark-theme safe):
+#   @@BG@@         window / widget background        (palette bg)
+#   @@BG2@@        raised / alt background, tooltips  (palette bg2)
+#   @@FG@@         primary foreground / text          (palette fg)
+#   @@FG_LIGHT@@   bright foreground / emphasis       (palette fg_light)
+#   @@ACCENT@@     accent (borders, focus, progress)  (palette accent)
+#   @@BASE@@       text-entry / list base background  (usually bg)
+#   @@TEXT@@       text on @@BASE@@                    (usually fg_light)
+#   @@SEL_BG@@     selection background               (usually accent)
+#   @@SEL_FG@@     text on selection                  (usually fg_light/bg)
+#   @@BORDER@@     subtle border / separator          (usually bg2)
+#   @@INSENS_FG@@  disabled / insensitive foreground  (usually fg dimmed)
+# =====================================================================
+
+gtk-color-scheme = "bg_color:@@BG@@\nfg_color:@@FG@@\nbase_color:@@BASE@@\ntext_color:@@TEXT@@\nselected_bg_color:@@SEL_BG@@\nselected_fg_color:@@SEL_FG@@\ntooltip_bg_color:@@BG2@@\ntooltip_fg_color:@@FG_LIGHT@@"
+
+# ---------------------------------------------------------------------
+# Default style — applied to every widget, then refined below.
+# ---------------------------------------------------------------------
+style "cozy-default"
+{
+    xthickness = 1
+    ythickness = 1
+
+    # Geometry / readability tweaks
+    GtkButton::default_border          = { 0, 0, 0, 0 }
+    GtkButton::child_displacement_x    = 0
+    GtkButton::child_displacement_y    = 0
+    GtkButton::focus-padding           = 1
+    GtkRange::trough_border            = 0
+    GtkRange::slider_width             = 12
+    GtkRange::stepper_size             = 12
+    GtkScrollbar::min_slider_length    = 30
+    GtkScrollbar::has_backward_stepper = 0
+    GtkScrollbar::has_forward_stepper  = 0
+    GtkCheckButton::indicator_size     = 14
+    GtkMenuItem::arrow_scaling         = 0.5
+    GtkWidget::focus_line_width        = 1
+    GtkWidget::focus_padding           = 1
+    GtkWidget::link_color              = "@@ACCENT@@"
+    GtkWidget::visited_link_color      = "@@ACCENT@@"
+    GtkTreeView::odd_row_color         = "@@BG@@"
+    GtkTreeView::even_row_color        = "@@BG2@@"
+
+    fg[NORMAL]        = "@@FG@@"
+    fg[PRELIGHT]      = "@@FG_LIGHT@@"
+    fg[ACTIVE]        = "@@FG@@"
+    fg[SELECTED]      = "@@SEL_FG@@"
+    fg[INSENSITIVE]   = "@@INSENS_FG@@"
+
+    bg[NORMAL]        = "@@BG@@"
+    bg[PRELIGHT]      = "@@BG2@@"
+    bg[ACTIVE]        = "@@BG2@@"
+    bg[SELECTED]      = "@@SEL_BG@@"
+    bg[INSENSITIVE]   = "@@BG@@"
+
+    base[NORMAL]      = "@@BASE@@"
+    base[PRELIGHT]    = "@@SEL_BG@@"
+    base[ACTIVE]      = "@@SEL_BG@@"
+    base[SELECTED]    = "@@SEL_BG@@"
+    base[INSENSITIVE] = "@@BG@@"
+
+    text[NORMAL]      = "@@TEXT@@"
+    text[PRELIGHT]    = "@@FG_LIGHT@@"
+    text[ACTIVE]      = "@@SEL_FG@@"
+    text[SELECTED]    = "@@SEL_FG@@"
+    text[INSENSITIVE] = "@@INSENS_FG@@"
+}
+class "GtkWidget" style "cozy-default"
+
+# ---------------------------------------------------------------------
+# Buttons / toggles
+# ---------------------------------------------------------------------
+style "cozy-button" = "cozy-default"
+{
+    xthickness = 3
+    ythickness = 3
+
+    bg[NORMAL]        = "@@BG2@@"
+    bg[PRELIGHT]      = "@@ACCENT@@"
+    bg[ACTIVE]        = "@@ACCENT@@"
+    bg[INSENSITIVE]   = "@@BG@@"
+
+    fg[NORMAL]        = "@@FG_LIGHT@@"
+    fg[PRELIGHT]      = "@@SEL_FG@@"
+    fg[ACTIVE]        = "@@SEL_FG@@"
+    fg[INSENSITIVE]   = "@@INSENS_FG@@"
+}
+class "GtkButton"       style "cozy-button"
+class "GtkToggleButton" style "cozy-button"
+widget_class "*<GtkButton>" style "cozy-button"
+
+# ---------------------------------------------------------------------
+# Menus / menubar / menu items
+# ---------------------------------------------------------------------
+style "cozy-menu" = "cozy-default"
+{
+    xthickness = 1
+    ythickness = 1
+    bg[NORMAL] = "@@BG2@@"
+    fg[NORMAL] = "@@FG_LIGHT@@"
+}
+class "GtkMenu"    style "cozy-menu"
+class "GtkMenuBar" style "cozy-menu"
+
+style "cozy-menuitem" = "cozy-default"
+{
+    xthickness = 2
+    ythickness = 3
+    bg[PRELIGHT]   = "@@SEL_BG@@"
+    fg[PRELIGHT]   = "@@SEL_FG@@"
+    text[PRELIGHT] = "@@SEL_FG@@"
+}
+class "GtkMenuItem" style "cozy-menuitem"
+widget_class "*<GtkMenuItem>" style "cozy-menuitem"
+
+# ---------------------------------------------------------------------
+# Text entries / combos / spin buttons
+# ---------------------------------------------------------------------
+style "cozy-entry" = "cozy-default"
+{
+    xthickness        = 3
+    ythickness        = 3
+    bg[NORMAL]        = "@@BASE@@"
+    base[NORMAL]      = "@@BASE@@"
+    base[INSENSITIVE] = "@@BG@@"
+    text[NORMAL]      = "@@TEXT@@"
+    text[INSENSITIVE] = "@@INSENS_FG@@"
+}
+class "GtkEntry"       style "cozy-entry"
+class "GtkSpinButton"  style "cozy-entry"
+
+# ---------------------------------------------------------------------
+# Lists / trees / icon views
+# ---------------------------------------------------------------------
+style "cozy-treeview" = "cozy-default"
+{
+    bg[NORMAL]     = "@@BASE@@"
+    base[NORMAL]   = "@@BASE@@"
+    base[SELECTED] = "@@SEL_BG@@"
+    base[ACTIVE]   = "@@SEL_BG@@"
+    text[SELECTED] = "@@SEL_FG@@"
+    text[ACTIVE]   = "@@SEL_FG@@"
+}
+class "GtkTreeView" style "cozy-treeview"
+
+# treeview column headers behave like buttons
+style "cozy-header" = "cozy-button"
+{
+    xthickness = 2
+    ythickness = 2
+    bg[NORMAL] = "@@BG2@@"
+    fg[NORMAL] = "@@FG_LIGHT@@"
+}
+widget_class "*.<GtkTreeView>.<GtkButton>" style "cozy-header"
+widget_class "*.GtkCList.GtkButton"        style "cozy-header"
+
+# ---------------------------------------------------------------------
+# Scrollbars / ranges / sliders
+# ---------------------------------------------------------------------
+style "cozy-scrollbar" = "cozy-default"
+{
+    bg[NORMAL]      = "@@BG2@@"
+    bg[PRELIGHT]    = "@@ACCENT@@"
+    bg[ACTIVE]      = "@@ACCENT@@"
+    bg[INSENSITIVE] = "@@BG@@"
+    trough_color    = "@@BG@@"
+}
+class "GtkScrollbar" style "cozy-scrollbar"
+class "GtkRange"     style "cozy-scrollbar"
+
+# ---------------------------------------------------------------------
+# Progress bars
+# ---------------------------------------------------------------------
+style "cozy-progress" = "cozy-default"
+{
+    xthickness   = 1
+    ythickness   = 1
+    bg[NORMAL]   = "@@BG2@@"
+    bg[PRELIGHT] = "@@ACCENT@@"
+    fg[PRELIGHT] = "@@SEL_FG@@"
+}
+class "GtkProgressBar" style "cozy-progress"
+
+# ---------------------------------------------------------------------
+# Notebooks (tabs) / panes / frames / separators
+# ---------------------------------------------------------------------
+style "cozy-notebook" = "cozy-default"
+{
+    bg[NORMAL]   = "@@BG@@"
+    bg[ACTIVE]   = "@@BG2@@"
+    bg[PRELIGHT] = "@@BG2@@"
+}
+class "GtkNotebook" style "cozy-notebook"
+
+# ---------------------------------------------------------------------
+# Tooltips
+# ---------------------------------------------------------------------
+style "cozy-tooltip" = "cozy-default"
+{
+    xthickness = 4
+    ythickness = 4
+    bg[NORMAL] = "@@BG2@@"
+    fg[NORMAL] = "@@FG_LIGHT@@"
+}
+widget "gtk-tooltip*" style "cozy-tooltip"
+widget "gtk-tooltips" style "cozy-tooltip"
+
+# ---------------------------------------------------------------------
+# Scales (sliders) — knob picks up accent
+# ---------------------------------------------------------------------
+style "cozy-scale" = "cozy-scrollbar"
+{
+    bg[NORMAL] = "@@ACCENT@@"
+}
+class "GtkScale" style "cozy-scale"

@@ -1,0 +1,230 @@
+/* =====================================================================
+ * Cozy — GTK4 / libadwaita theme
+ * DARK theme with warm accents. Palette-agnostic.
+ *
+ * Every colour is a @@TOKEN@@ that the theme-apply script substitutes
+ * from the active palette in themes.json. NEVER hardcode a hex value
+ * here — keep it fully parametrised so any dark palette works.
+ *
+ * Token map (same as the GTK2 gtkrc):
+ *   @@BG@@        window background           (palette bg)
+ *   @@BG2@@       raised surface / headerbar  (palette bg2)
+ *   @@FG@@        primary foreground          (palette fg)
+ *   @@FG_LIGHT@@  bright foreground           (palette fg_light)
+ *   @@ACCENT@@    accent                      (palette accent)
+ *   @@BASE@@      view / list background      (usually bg)
+ *   @@TEXT@@      text on @@BASE@@             (usually fg_light)
+ *   @@SEL_BG@@    selection background        (usually accent)
+ *   @@SEL_FG@@    text on selection           (usually fg_light/bg)
+ *   @@BORDER@@    subtle border / separator   (usually bg2)
+ *   @@INSENS_FG@@ disabled foreground         (usually fg dimmed)
+ * ===================================================================== */
+
+/* ---------------------------------------------------------------------
+ * libadwaita named colours.
+ * These are the ONLY reliable knobs for Adwaita/libadwaita apps; the
+ * theme name is otherwise ignored. We redefine each one with our tokens.
+ * ------------------------------------------------------------------- */
+
+/* Window */
+@define-color window_bg_color @@BG@@;
+@define-color window_fg_color @@FG_LIGHT@@;
+
+/* Views (text views, lists, the main content area) */
+@define-color view_bg_color @@BASE@@;
+@define-color view_fg_color @@TEXT@@;
+
+/* Header bar / toolbars */
+@define-color headerbar_bg_color @@BG2@@;
+@define-color headerbar_fg_color @@FG_LIGHT@@;
+@define-color headerbar_border_color @@BORDER@@;
+@define-color headerbar_backdrop_color @@BG@@;
+@define-color headerbar_shade_color rgba(0, 0, 0, 0.36);
+
+/* Sidebars (Adwaita 1.4+) */
+@define-color sidebar_bg_color @@BG2@@;
+@define-color sidebar_fg_color @@FG_LIGHT@@;
+@define-color sidebar_backdrop_color @@BG@@;
+@define-color sidebar_border_color @@BORDER@@;
+@define-color sidebar_shade_color rgba(0, 0, 0, 0.36);
+
+@define-color secondary_sidebar_bg_color @@BG@@;
+@define-color secondary_sidebar_fg_color @@FG_LIGHT@@;
+@define-color secondary_sidebar_backdrop_color @@BG@@;
+@define-color secondary_sidebar_border_color @@BORDER@@;
+@define-color secondary_sidebar_shade_color rgba(0, 0, 0, 0.36);
+
+/* Cards / boxed lists */
+@define-color card_bg_color @@BG2@@;
+@define-color card_fg_color @@FG_LIGHT@@;
+@define-color card_shade_color rgba(0, 0, 0, 0.36);
+
+/* Thumbnails (e.g. tab overview) */
+@define-color thumbnail_bg_color @@BG2@@;
+@define-color thumbnail_fg_color @@FG_LIGHT@@;
+
+/* Dialogs */
+@define-color dialog_bg_color @@BG2@@;
+@define-color dialog_fg_color @@FG_LIGHT@@;
+
+/* Popovers (menus, dropdowns) */
+@define-color popover_bg_color @@BG2@@;
+@define-color popover_fg_color @@FG_LIGHT@@;
+@define-color popover_shade_color rgba(0, 0, 0, 0.36);
+
+/* Overview / shade / scrollbar outline */
+@define-color shade_color rgba(0, 0, 0, 0.36);
+@define-color scrollbar_outline_color @@BG@@;
+
+/* Accent — bg is the filled chip, fg the text on it, accent_color the
+ * standalone tint used for links/labels on dark backgrounds. */
+@define-color accent_bg_color @@ACCENT@@;
+@define-color accent_fg_color @@SEL_FG@@;
+@define-color accent_color @@PRIMARY@@;
+
+/* Destructive / success / warning / error.
+ * We keep these semantic but pull them toward the palette so they don't
+ * clash. destructive uses the accent's complement role via @@ACCENT@@'d
+ * red where available; here we stay palette-driven and let the script
+ * decide. Defaults below are palette accents so nothing hardcodes red. */
+@define-color destructive_bg_color @@DESTRUCTIVE@@;
+@define-color destructive_fg_color @@SEL_FG@@;
+@define-color destructive_color @@DESTRUCTIVE@@;
+
+@define-color success_bg_color @@ACCENT@@;
+@define-color success_fg_color @@SEL_FG@@;
+@define-color success_color @@PRIMARY@@;
+
+@define-color warning_bg_color @@ACCENT@@;
+@define-color warning_fg_color @@SEL_FG@@;
+@define-color warning_color @@PRIMARY@@;
+
+@define-color error_bg_color @@DESTRUCTIVE@@;
+@define-color error_fg_color @@SEL_FG@@;
+@define-color error_color @@DESTRUCTIVE@@;
+
+/* Misc named colours some apps still read directly */
+@define-color theme_bg_color @@BG@@;
+@define-color theme_fg_color @@FG_LIGHT@@;
+@define-color theme_base_color @@BASE@@;
+@define-color theme_text_color @@TEXT@@;
+@define-color theme_selected_bg_color @@SEL_BG@@;
+@define-color theme_selected_fg_color @@SEL_FG@@;
+@define-color borders @@BORDER@@;
+@define-color insensitive_fg_color @@INSENS_FG@@;
+
+/* ---------------------------------------------------------------------
+ * Minimal widget rules.
+ * libadwaita apps honour the named colours above for ~90% of their look.
+ * These rules cover the gaps (plain GTK4 apps, borders, selection text)
+ * and always reference @define-color names — no raw hex.
+ * ------------------------------------------------------------------- */
+
+window,
+.background {
+    background-color: @window_bg_color;
+    color: @window_fg_color;
+}
+
+headerbar,
+.titlebar {
+    background-color: @headerbar_bg_color;
+    color: @headerbar_fg_color;
+}
+
+/* Text entries */
+entry,
+spinbutton,
+.entry {
+    background-color: @view_bg_color;
+    color: @view_fg_color;
+    border-color: @borders;
+}
+
+entry:focus-within,
+spinbutton:focus-within {
+    border-color: @accent_color;
+}
+
+/* Buttons */
+button {
+    color: @window_fg_color;
+}
+
+button.suggested-action {
+    background-color: @accent_bg_color;
+    color: @accent_fg_color;
+}
+
+button.destructive-action {
+    background-color: @destructive_bg_color;
+    color: @destructive_fg_color;
+}
+
+/* Selection everywhere */
+*:selected,
+selection,
+*:selected:focus {
+    background-color: @accent_bg_color;
+    color: @accent_fg_color;
+}
+
+/* Lists / rows */
+list,
+row,
+.view {
+    background-color: @view_bg_color;
+    color: @view_fg_color;
+}
+
+row:selected,
+row.activatable:selected {
+    background-color: @accent_bg_color;
+    color: @accent_fg_color;
+}
+
+/* Popovers / menus */
+popover > contents,
+popover.menu > contents {
+    background-color: @popover_bg_color;
+    color: @popover_fg_color;
+}
+
+/* Tooltips */
+tooltip {
+    background-color: @card_bg_color;
+    color: @card_fg_color;
+}
+
+/* Links / accent text */
+*:link,
+*:visited {
+    color: @accent_color;
+}
+
+/* Progress / level bars */
+progressbar > trough > progress,
+levelbar block.filled {
+    background-color: @accent_bg_color;
+}
+
+/* Switches / checks pick up accent when active */
+switch:checked,
+check:checked,
+radio:checked {
+    background-color: @accent_bg_color;
+    color: @accent_fg_color;
+}
+
+/* Scrollbar slider */
+scrollbar slider {
+    background-color: @insensitive_fg_color;
+}
+scrollbar slider:hover {
+    background-color: @accent_color;
+}
+
+/* Separators / borders */
+separator {
+    background-color: @borders;
+}

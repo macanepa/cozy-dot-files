@@ -188,3 +188,25 @@ def power_mode_text():
         "balanced":    "\uf24e",   # scale -> Equilibrado
         "performance": "\uf0e7",   # bolt  -> Maximo
     }.get(prof, "\uf059")          # question -> unknown
+
+
+# \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+#     Network indicator (NetworkManager)
+# \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+def network_text():
+    """A single Font-Awesome glyph for the current network state.
+
+    Painted by the GenPollText widget in the theme's ``fg`` so it matches the
+    rest of the bar icons. Click the widget to open scripts/network-menu.sh.
+    """
+    import subprocess
+
+    try:
+        state = subprocess.run(
+            ["nmcli", "-t", "-f", "STATE", "general"],
+            capture_output=True, text=True, timeout=2,
+        ).stdout.strip()
+    except Exception:
+        state = ""
+    # "connected" / "connected (site only)" -> online; else offline
+    return "\uf1eb" if state.startswith("connected") else "\uf127"  # wifi / unlink
