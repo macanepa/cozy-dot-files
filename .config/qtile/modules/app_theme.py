@@ -313,13 +313,27 @@ def theme_gtk(pal):
     colors = {
         "theme_bg_color": bg, "theme_fg_color": fgl, "theme_bg2_color": bg2,
         "theme_base_color": base, "theme_text_color": fgl,
-        "theme_selected_bg_color": acc, "theme_selected_fg_color": sel_fg,
+        # NOTE: traditional GtkMenu (Thunar etc.) draws shortcut text with
+        # theme_selected_fg_color, NOT the menuitem colour — so it must stay
+        # readable on the DARK menu, hence insens_fg (a mid tone) here. The DARK
+        # "text on the orange highlight" lives in accent_text_color, which the
+        # CSS uses for every real selection/hover.
+        "theme_selected_bg_color": acc, "theme_selected_fg_color": insens_fg,
+        "accent_text_color": sel_fg,
         "accent_color": acc, "accent_fg_color": sel_fg,
         "theme_hover_color": _mix(bg2, fgl, 0.10), "borders_color": border,
         "insensitive_bg_color": bg, "insensitive_fg_color": insens_fg,
         "warning_color": "#E5C07A", "error_color": "#E06B74",
         "success_color": "#98C379",
         "tooltip_bg_color": bg2, "tooltip_fg_color": fgl, "primary_color": pri,
+        # Define the unfocused/backdrop-state colours too, so a window in the
+        # background stays on-theme instead of falling back to GTK's defaults.
+        "theme_unfocused_fg_color": fgl, "theme_unfocused_text_color": fgl,
+        "theme_unfocused_bg_color": bg2, "theme_unfocused_base_color": base,
+        "theme_unfocused_selected_bg_color": acc,
+        "theme_unfocused_selected_fg_color": sel_fg,
+        "theme_unfocused_borders": border, "unfocused_borders": border,
+        "menu_fg_color": fgl, "menu_bg_color": bg2,
     }
     cozy = _h(_COZY)
     tpl = _h("~/.config/qtile/templates")
