@@ -7,4 +7,7 @@ Type=sddm-theme
 Version=1.0
 MainScript=Main.qml
 ConfigFile=theme.conf
-QtVersion=qt6
+# Must be the bare major version (6), NOT "qt6": SDDM builds the greeter path as
+# sddm-greeter-qt<QtVersion>, and "qt6" parses to int 0 -> sddm-greeter-qt0 (missing)
+# -> silently falls back to the default blue theme.
+QtVersion=6

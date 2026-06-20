@@ -46,14 +46,31 @@ ok "Reader detected."
 # configure before any finger is enrolled (it simply falls back to your password).
 
 # 3) Wire PAM — safely (sufficient => password remains a full fallback)
+#
+# The fprintd rule carries `timeout=5`: because it is the FIRST auth rule, every
+# login() in the SDDM greeter runs fprintd before the password is checked. With a
+# short timeout, choosing the PASSWORD backup (not touching the sensor) only waits
+# ~5s instead of fprintd's 30s default. The greeter (Main.qml) does NOT auto-arm,
+# so fprintd only runs when you opt into the finger (Enter on empty / click icon)
+# or right after a password submit. `max-tries=3` lets a finicky press retry.
+# Lower timeout to 3 for a snappier password path; raise it for more finger margin.
+FPRINT_RULE='auth      sufficient  pam_fprintd.so  timeout=5 max-tries=3'
 configure_pam() {
     local file="$1"
     [ -f "$file" ] || { warn "$file not found, skipping"; return; }
-    if grep -q 'pam_fprintd.so' "$file"; then ok "$file already has pam_fprintd"; return; fi
+    if grep -q 'pam_fprintd.so' "$file"; then
+        # Already present — normalise the rule to exactly $FPRINT_RULE (idempotent,
+        # so re-running picks up a changed timeout/max-tries).
+        if grep -qF "$FPRINT_RULE" "$file"; then ok "$file already configured"; return; fi
+        cp -a "$file" "${file}.bak.$(date +%s)"
+        sed -i 's#^\s*auth\s\+sufficient\s\+pam_fprintd.so.*#'"$FPRINT_RULE"'#' "$file"
+        ok "$file rule normalised (backup: ${file}.bak.*)"
+        return
+    fi
     cp -a "$file" "${file}.bak.$(date +%s)"
     # insert as the FIRST auth rule; 'sufficient' => fingerprint OK = pass,
     # fingerprint fail/timeout = fall through to the normal password rules.
-    sed -i '0,/^auth/ s/^auth/auth      sufficient  pam_fprintd.so\nauth/' "$file"
+    sed -i '0,/^auth/ s#^auth#'"$FPRINT_RULE"'\nauth#' "$file"
     if grep -q 'pam_fprintd.so' "$file"; then ok "$file configured (backup: ${file}.bak.*)"; else warn "could not edit $file"; fi
 }
 say "3) Configuring PAM (login + sudo)"

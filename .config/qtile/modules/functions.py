@@ -56,9 +56,31 @@ def set_bar_mode(qtile, red):
     """
     import modules.screens as S
 
+    # Snapshot which group each screen shows + the focused screen. The
+    # reconfigure_screens() call below rebuilds every screen and reshuffles the
+    # group<->screen links: it points the screen at the config's default group
+    # while the previously-shown group still points back at the screen — a
+    # "phantom" assignment that corrupts mod+N group switching (qtile then thinks
+    # the group is already displayed on some screen). We restore a clean mapping
+    # right after. (screen.set_group can't repair it: its swap branch is a no-op
+    # when both groups already sit on the same screen.)
+    prev = {s.index: s.group for s in qtile.screens}
+    cur = qtile.current_screen.index
+
     pal = S.RED if red else S.current_base_palette()
     qtile.config.screens = S.make_screens(pal)
     qtile.reconfigure_screens()
+
+    for g in qtile.groups:
+        g.screen = None
+    for s in qtile.screens:
+        g = prev.get(s.index, s.group)
+        s.group = g
+        g.screen = s
+    try:
+        qtile.focus_screen(cur)
+    except Exception:
+        pass
 
 
 # ── Public paint helpers (used by apply/revert snippets & the watcher) ──
