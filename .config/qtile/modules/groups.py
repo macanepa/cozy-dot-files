@@ -1,6 +1,9 @@
 from libqtile.config import Key, Group, ScratchPad, DropDown
 from libqtile.lazy import lazy
 from .keys import keys, mod
+import os
+
+_NET_TUI = os.path.expanduser("~/.config/qtile/scripts/network-tui.sh")
 
 roman = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"]
 groups1 = ["1", "2", "3", "4"]
@@ -96,7 +99,9 @@ groups += [
             ),
             DropDown(
                 "sound",
-                "pavucontrol",
+                # pavucontrol 6.x es GTK4 e ignora gtk-theme-name del settings.ini;
+                # GTK_THEME es el único mecanismo que GTK4 respeta para temas custom.
+                "env GTK_THEME=Cozy pavucontrol",
                 opacity=1,
                 on_focus_lost_hide=True,
                 **dropdown_geometry(
@@ -105,6 +110,13 @@ groups += [
                     margin_top_px=0,
                     margin_right_px=58,
                 )
+            ),
+            DropDown(
+                "network",
+                f"alacritty --class cozy-net -e {_NET_TUI}",
+                opacity=1,
+                on_focus_lost_hide=True,
+                **geom
             ),
         ],
     )

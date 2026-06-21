@@ -23,6 +23,11 @@ def toggle_dropdown_sound(qtile):
     qtile.groups_map["scratchpad"].dropdown_toggle("sound")
 
 
+@lazy.function
+def toggle_dropdown_network(qtile):
+    qtile.groups_map["scratchpad"].dropdown_toggle("network")
+
+
 # ─────────────────────────────────────────────────────────────
 #   Low-battery alert: rebuild the WHOLE bar as a gorgeous red
 #
@@ -193,11 +198,13 @@ def power_mode_text():
 # \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
 #     Network indicator (NetworkManager)
 # \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+
+
 def network_text():
     """A single Font-Awesome glyph for the current network state.
 
-    Painted by the GenPollText widget in the theme's ``fg`` so it matches the
-    rest of the bar icons. Click the widget to open scripts/network-menu.sh.
+    Painted in the theme's ``fg`` so it matches the rest of the bar icons. Click
+    the icon to toggle the network dropdown (see modules/groups.py).
     """
     import subprocess
 

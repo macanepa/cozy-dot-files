@@ -11,12 +11,26 @@ from .functions import (
     toggle_dropdown_ai,
     toggle_dropdown_bluetooth,
     toggle_dropdown_sound,
+    toggle_dropdown_network,
     power_mode_text,
+    network_text,
 )
 import os
 import json
 
 from .groups import groups1, groups2
+
+# Tray con soporte de menú al CLICK DERECHO (cerrar/Quit de cada app).
+# El StatusNotifier oficial de qtile no implementa menús dbusmenu; el de
+# qtile-extras (de elParaguayo, mantenedor de qtile) sí. Si qtile-extras está
+# instalado se usa ese; si no, cae al de qtile (sin menú) y nada se rompe.
+# Para habilitarlo:  yay -S qtile-extras   (versión debe coincidir con qtile)
+try:
+    from qtile_extras.widget import StatusNotifier as TrayStatusNotifier
+except ImportError:
+    from libqtile.widget import StatusNotifier as TrayStatusNotifier
+
+# The bar's Wi-Fi icon toggles the network dropdown (see modules/groups.py).
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -168,6 +182,28 @@ def make_bar(C):
                 disable_drag=True,
                 visible_groups=groups1,
             ),
+            # Music group "M" — now sits right after groups 1-4, with a smaller
+            # icon (its own GroupBox so it can be sized independently of 1-4).
+            widget.GroupBox(
+                font="JetBrainsMono Nerd Font",
+                fontsize=15,
+                borderwidth=3,
+                highlight_method="block",
+                active=C["fg"],
+                block_highlight_text_color=C["fg_light"],
+                highlight_color=C["highlight"],
+                inactive=C["bg"],
+                foreground=C["highlight"],
+                background=C["bg2"],
+                this_current_screen_border=C["bg2"],
+                this_screen_border=C["bg2"],
+                other_current_screen_border=C["bg2"],
+                other_screen_border=C["bg2"],
+                urgent_border=C["bg2"],
+                rounded=True,
+                disable_drag=True,
+                visible_groups=["M"],
+            ),
             widget.Spacer(
                 length=8,
                 background=C["bg2"],
@@ -210,7 +246,7 @@ def make_bar(C):
             widget.Image(
                 filename=_asset(C, "3.png"),
             ),
-            widget.StatusNotifier(
+            TrayStatusNotifier(
                 background=C["bg"],
                 padding=6,
             ),
@@ -303,25 +339,18 @@ def make_bar(C):
                 foreground=C["fg"],
                 background=C["bg2"],
             ),
-            widget.GroupBox(
-                font="JetBrainsMono Nerd Font",
-                fontsize=18,
-                borderwidth=3,
-                highlight_method="block",
-                active=C["fg"],
-                block_highlight_text_color=C["fg_light"],
-                highlight_color=C["highlight"],
-                inactive=C["bg"],
-                foreground=C["highlight"],
+            # Network: a Wi-Fi glyph that reflects connectivity; click toggles the
+            # network dropdown (scratchpad), like the sound/bluetooth icons — it runs
+            # the themed nmcli TUI (scripts/network-tui.sh): scan, connect, toggle.
+            widget.GenPollText(
+                func=network_text,
+                update_interval=5,
+                font="Font Awesome 6 Free Solid",
+                fontsize=14,
+                padding=10,
+                foreground=C["fg"],
                 background=C["bg2"],
-                this_current_screen_border=C["bg2"],
-                this_screen_border=C["bg2"],
-                other_current_screen_border=C["bg2"],
-                other_screen_border=C["bg2"],
-                urgent_border=C["bg2"],
-                rounded=True,
-                disable_drag=True,
-                visible_groups=["M"],
+                mouse_callbacks={"Button1": toggle_dropdown_network},
             ),
             widget.TextBox(
                 text=" ",
@@ -335,6 +364,7 @@ def make_bar(C):
                 text="",
                 background=C["bg2"],
                 foreground=C["fg"],
+                font="CaskaydiaCove Nerd Font",  # declare the font that actually draws U+F293
                 fontsize=18,
                 padding=10,
                 mouse_callbacks={"Button1": toggle_dropdown_bluetooth},
