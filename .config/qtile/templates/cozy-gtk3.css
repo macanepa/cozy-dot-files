@@ -59,8 +59,8 @@ button {
   transition: background-color 150ms ease, box-shadow 150ms ease;
 }
 button:hover { background-color: @theme_hover_color; }
-button:active { background-color: @theme_selected_bg_color; color: @theme_selected_fg_color; }
-button:checked { background-color: @theme_selected_bg_color; color: @theme_selected_fg_color; }
+button:active { background-color: @theme_selected_bg_color; color: @accent_text_color; }
+button:checked { background-color: @theme_selected_bg_color; color: @accent_text_color; }
 button:disabled { color: @insensitive_fg_color; background-color: transparent; }
 button:focus-visible { box-shadow: inset 0 0 0 2px @accent_color; }
 
@@ -93,7 +93,7 @@ entry:focus, spinbutton:focus-within {
 }
 entry:disabled, spinbutton:disabled { color: @insensitive_fg_color; }
 entry image { color: @insensitive_fg_color; }
-entry selection { background-color: @theme_selected_bg_color; color: @theme_selected_fg_color; }
+entry selection { background-color: @theme_selected_bg_color; color: @accent_text_color; }
 spinbutton button { border: none; background: transparent; border-radius: 0; min-width: 24px; }
 
 /* ---- treeview / lists / icon view (Thunar, firewall-config) -------------- */
@@ -106,16 +106,37 @@ treeview.view:selected, list row:selected, columnview row:selected,
 iconview:selected, flowboxchild:selected,
 .view:selected, .view:selected:focus, .view text:selected, .view:selected text {
   background-color: @theme_selected_bg_color;
-  color: @theme_selected_fg_color;
+  color: @accent_text_color;
   border-radius: 0;
 }
 .view:selected, iconview:selected, treeview.view:selected {
   -gtk-icon-effect: none; -gtk-icon-shadow: none;
 }
+/* Keep dark text on the orange highlight for selections nested in lists, trees
+   and combo-box popups. Deliberately NOT a bare *:selected: a traditional GtkMenu
+   draws its shortcut (accelerator) text in the :selected STATE, so a global rule
+   would blacken it on the dark menu again. cellviews/cells/rows are the combo &
+   list content — the menu accel is a GtkAccelLabel, not a cellview, so excluded. */
+.view :selected, treeview.view :selected, columnview :selected,
+list :selected, iconview :selected, flowbox :selected,
+cellview:selected, combobox window :selected, combobox popover :selected {
+  color: @accent_text_color;
+}
 list row { padding: 2px 4px; }
 list { background-color: transparent; }
 iconview { background-color: @theme_base_color; }
 iconview:hover { background-color: @theme_hover_color; }
+
+/* drag-to-select rectangle (rubberband). Left unstyled, GTK falls back to an
+   OPAQUE BLACK box; give it a translucent accent fill + a crisp accent border so
+   the items underneath stay visible while band-selecting. */
+rubberband, .rubberband,
+.view.rubberband, treeview.view.rubberband, iconview.rubberband,
+flowbox.rubberband, .content-view.rubberband,
+.view rubberband, treeview.view rubberband, flowbox rubberband {
+  border: 1px solid @accent_color;
+  background-color: alpha(@accent_color, 0.25);
+}
 
 treeview.view header button, columnview header button {
   background-color: @theme_bg2_color;
@@ -137,7 +158,7 @@ treeview.view:selected:focus, list row:selected:focus { outline: none; }
 placessidebar row, .sidebar row { border-radius: 0; padding: 4px 10px; min-height: 30px; }
 placessidebar row:hover, .sidebar row:hover { background-color: @theme_hover_color; }
 placessidebar row:selected, .sidebar row:selected {
-  background-color: @theme_selected_bg_color; color: @theme_selected_fg_color;
+  background-color: @theme_selected_bg_color; color: @accent_text_color;
 }
 separator.sidebar, .sidebar separator { background-color: @borders_color; }
 
@@ -160,14 +181,16 @@ menu menuitem, .menu menuitem, modelbutton, popover button.model {
   min-height: 22px;
   color: @theme_fg_color;
 }
-menuitem:hover, modelbutton:hover, menuitem:focus { background-color: @theme_selected_bg_color; color: @theme_selected_fg_color; }
+menuitem:hover, modelbutton:hover, menuitem:focus { background-color: @theme_selected_bg_color; color: @accent_text_color; }
 menuitem:disabled, modelbutton:disabled { color: @insensitive_fg_color; }
-/* keyboard-shortcut text (accelerators) — keep it LIGHT & readable on dark,
-   not the old near-black; brighten further on the orange hover row */
+/* Shortcut (accelerator) text. A traditional GtkMenu draws the ENABLED accel in
+   the :selected STATE, so it follows theme_selected_fg_color — kept LIGHT (like
+   the green theme, where the dark accent makes this resolve light) so shortcuts
+   read clearly on the dark menu. Disabled accels stay dim (rule below); the
+   highlighted orange row keeps dark text. */
 menuitem accelerator, menuitem arrow, .accelerator,
 modelbutton .accelerator, .keycap {
-  color: @insensitive_fg_color;       /* solid — no opacity, which would compound
-                                          with GTK's disabled dimming -> near black */
+  color: @theme_selected_fg_color;    /* light & readable on the dark menu */
 }
 menuitem:hover accelerator, menuitem:focus accelerator { color: @theme_selected_fg_color; }
 menuitem:disabled, menuitem:disabled label, menuitem:disabled accelerator {

@@ -313,7 +313,16 @@ def theme_gtk(pal):
     colors = {
         "theme_bg_color": bg, "theme_fg_color": fgl, "theme_bg2_color": bg2,
         "theme_base_color": base, "theme_text_color": fgl,
-        "theme_selected_bg_color": acc, "theme_selected_fg_color": sel_fg,
+        # A traditional GtkMenu (Thunar's menubar) draws ENABLED shortcut text
+        # with theme_selected_fg_color, NOT the menuitem colour — so it must read
+        # clearly on the DARK menu. Use the light fg (like the green theme, where
+        # the accent is dark so this resolves light and the shortcuts look crisp).
+        # The HIGHLIGHTED row's text/shortcut still goes dark via menuitem:hover
+        # (accent_text_color), and every real selection uses accent_text_color too
+        # (explicit rules + scoped list/combo catch-all), so the orange highlight
+        # keeps dark, high-contrast text.
+        "theme_selected_bg_color": acc, "theme_selected_fg_color": fgl,
+        "accent_text_color": sel_fg,
         "accent_color": acc, "accent_fg_color": sel_fg,
         "theme_hover_color": _mix(bg2, fgl, 0.10), "borders_color": border,
         "insensitive_bg_color": bg, "insensitive_fg_color": insens_fg,
